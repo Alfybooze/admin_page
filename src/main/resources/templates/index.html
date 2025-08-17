@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>User Management System</h1>
+        
+        <!-- Statistics Section -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" th:text="${totalElements}">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${totalPages}">0</div>
+                <div class="stat-label">Total Pages</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${currentPage + 1}">1</div>
+                <div class="stat-label">Current Page</div>
+            </div>
+        </div>
+        
+        <!-- Page Size Selector -->
+        <div class="page-size-selector">
+            <label for="pageSize">Items per page:</label>
+            <select id="pageSize" onchange="changePageSize(this.value)">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+        
+        <!-- Users Table -->
+        <div th:if="${users != null and !users.empty}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category ID</th>
+                        <th>Assets Name</th>
+                        <th>Assets Amount</th>
+                        <th>Duration (Months)</th>
+                        <th>Purchased Date</th>
+                        <th>Branch</th>
+                        <th>Last Deposit Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.category_ID}">Category</td>
+                        <td th:text="${user.assets_Name}">Asset Name</td>
+                        <td th:text="${user.assets_Amount}">0</td>
+                        <td th:text="${user.duration_months}">12</td>
+                        <td th:text="${user.purchased_Date != null ? #temporals.format(user.purchased_Date, 'yyyy-MM-dd HH:mm') : 'N/A'}">2024-01-01 12:00</td>
+                        <td th:text="${user.branch}">Main Branch</td>
+                        <td th:text="${user.last_Dep_Date}">2024-01-01</td>
+                        <td th:text="${user.status}">Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- No Data Message -->
+        <div th:if="${users == null or users.empty}" class="no-data">
+            <h3>No users found</h3>
+            <p>There are currently no users in the system.</p>
+        </div>
+        
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" class="pagination">
+            <!-- First Page -->
+            <a th:if="${currentPage > 0}" th:href="@{/(page=0, size=${userPage.size})}">&laquo;&laquo;</a>
+            <span th:if="${currentPage == 0}" class="disabled">&laquo;&laquo;</span>
+            
+            <!-- Previous Page -->
+            <a th:if="${currentPage > 0}" th:href="@{/(page=${currentPage - 1}, size=${userPage.size})}">&laquo;</a>
+            <span th:if="${currentPage == 0}" class="disabled">&laquo;</span>
+            
+            <!-- Page Numbers -->
+            <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <span th:if="${i == currentPage}" class="current" th:text="${i + 1}">1</span>
+                <a th:if="${i != currentPage}" th:href="@{/(page=${i}, size=${userPage.size})}" th:text="${i + 1}">1</a>
+            </th:block>
+            
+            <!-- Next Page -->
+            <a th:if="${currentPage < totalPages - 1}" th:href="@{/(page=${currentPage + 1}, size=${userPage.size})}">&raquo;</a>
+            <span th:if="${currentPage >= totalPages - 1}" class="disabled">&raquo;</span>
+            
+            <!-- Last Page -->
+            <a th:if="${currentPage < totalPages - 1}" th:href="@{/(page=${totalPages - 1}, size=${userPage.size})}">&raquo;&raquo;</a>
+            <span th:if="${currentPage >= totalPages - 1}" class="disabled">&raquo;&raquo;</span>
+        </div>
+        
+        <!-- Pagination Info -->
+        <div th:if="${totalElements > 0}" class="pagination-info">
+            Showing <span th:text="${currentPage * userPage.size + 1}">1</span> to 
+            <span th:text="${currentPage * userPage.size + users.size()}">10</span> of 
+            <span th:text="${totalElements}">100</span> entries
+        </div>
+    </div>
+    
+    <script>
+        function changePageSize(size) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('size', size);
+            urlParams.set('page', '0'); // Reset to first page when changing size
+            window.location.search = urlParams.toString();
+        }
+        
+        // Set the correct page size in the dropdown
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSize = urlParams.get('size') || '10';
+            document.getElementById('pageSize').value = currentSize;
+        };
+    </script>
+</body>
+</html>
