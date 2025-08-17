@@ -2,7 +2,7 @@
 ```markdown
 # 🛠️ Admin Page - Spring Boot Project
 
-This is a simple admin dashboard built with **Spring Boot** that allows administrators to view all registered users and uses pagination to help imrprove system performance and reduce the work load. It was created as a test project to demonstrate my growing backend development skills.
+This is a simple admin dashboard built with **Spring Boot** that allows administrators to view all registered users and uses pagination to help improve system performance and reduce the work load. It was created as a test project to demonstrate my growing backend development skills.
 
 ## 🚀 Features
 
